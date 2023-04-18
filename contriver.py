@@ -101,7 +101,7 @@ class QuestionReferenceDensityScorer:
             `ret`: `torch.return_types.topk`, use `ret.values` or `ret.indices` to get value or index tensor
         """
         scores = []
-        max_batch = 16
+        max_batch = 64
         for i in range((len(documents) + max_batch - 1) // max_batch):
             scores.append(self.score_documents_on_query(query, documents[max_batch*i:max_batch*(i+1)]).to('cpu'))
         scores = torch.concat(scores)
