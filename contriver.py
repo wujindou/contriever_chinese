@@ -142,8 +142,11 @@ def test_contriever_scorer():
         start = time.time()
         target_idx = scorer.select_topk(q, sentences, 5).indices
         top5_uids = [uids[idx] for idx in target_idx]
+        print(target_idx)
+        print(top5_uids)
         ids = [d['idx'] for d in query_results[q] if d['label']>=1]
         recall_at_5 = len(set(ids)&(set(top5_uids)))/len(ids) if  len(ids)>0 else 0.0
+        print(recall_at_5)
         sum_score+=recall_at_5
         total_cnt+=1
         print('cost ='+str(time.time()-start))
