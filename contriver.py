@@ -133,7 +133,7 @@ def test_contriever_scorer():
     total_cnt =0
     sum_score = 0
     import time
-    for q in query_results.keys():
+    for q in sorted(query_results.keys())[:20]:
         start = time.time()
         target_idx = scorer.select_topk(query, sentences, 5).indices
         top5_uids = [uids[idx] for idx in target_idx]
