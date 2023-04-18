@@ -110,17 +110,46 @@ class QuestionReferenceDensityScorer:
 def test_contriever_scorer():
     json_data= json.load(open('ndsd_data_all_clean_0413.json','r',encoding='utf-8'))
     sentences = []
-    for d in json_data:sentences.extend(d['sentences'])
+    import collections
+    uids = []
+    sentences=[]
+    idx = 202304180000
+    query_results = collections.defaultdict(list)
+    with open('d:/dureader_retrieval/train/cross.train.demo.tsv','r',encoding='utf-8') as lines:
+    for line in lines:
+        data = line.strip().split('\t')
+        query = data[0]
+        passage = data[2]
+        label = int(data[-1])
+        idx+=1
+        json_data = {'query':query,'passage':passage,'label':label,'idx':idx}
+        query_results[query].append(json_data)
+        idx_to_doc[idx]= json_data
+        uids.append(idx)
+        sentences.append(passage)
+#     for d in json_data:sentences.extend(d['sentences'])
 #     sentences = open('retrieval_data.txt').read().split('\n')
     checkpoint='facebook/mcontriever-msmarco'
     scorer = QuestionReferenceDensityScorer(checkpoint, checkpoint)
-    while True:
-        query = input('Input your query >>>')
-        print(scorer.score_documents_on_query(query, sentences))
-        target_idx = scorer.select_topk(query, sentences, 3).indices
-        result = [sentences[idx] for idx in target_idx]
-        for d in result:
-            print(d)
+    total_cnt =0
+    sum_score = 0
+    for q in query_results.keys():
+        target_idx = scorer.select_topk(query, sentences, 5).indices
+        top5_uids = [uids[idx] for idx in target_idx]
+        ids = [d['idx'] for d in query_results[q] if d['label']>=1]
+        recall_at_5 = len(set(ids)&(set(top5_uids)))/len(ids) if  len(ids)>0 else 0.0
+        sum_score+=recall_at_5
+        total_cnt+=1
+     print('recall @ 5 ='+str(float(sum_score)/total_cnt))
+#        target_idx = scorer.select_topk(query, sentences, 3).indices
+#         result = [sentences[idx] for idx in target_idx]
+#     while True:
+#         query = input('Input your query >>>')
+#         print(scorer.score_documents_on_query(query, sentences))
+#         target_idx = scorer.select_topk(query, sentences, 3).indices
+#         result = [sentences[idx] for idx in target_idx]
+#         for d in result:
+#             print(d)
 
 if __name__ == "__main__":
     test_contriever_scorer()
