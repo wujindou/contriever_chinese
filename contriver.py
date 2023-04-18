@@ -4,6 +4,7 @@ from transformers import AutoTokenizer, AutoModel, BertModel
 import json
 import re
 
+
 class Contriever(BertModel):
     def __init__(self, config, pooling="average", **kwargs):
         super().__init__(config, add_pooling_layer=False)
@@ -69,6 +70,7 @@ class QuestionReferenceDensityScorer:
     def __init__(self, question_encoder_path, reference_encoder_path, device=None) -> None:
         self.tokenizer = AutoTokenizer.from_pretrained(question_encoder_path)
         self.model = QuestionReferenceDensity_forPredict(question_encoder_path, reference_encoder_path)
+        self.select_inputs = None
         
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") if not device else device
         self.model = self.model.to(self.device).eval()
@@ -79,13 +81,16 @@ class QuestionReferenceDensityScorer:
         with torch.no_grad():
             question_inputs = self.tokenizer([sentences[0]], padding=True,
                                     truncation=True, return_tensors='pt')
-            select_inputs = self.tokenizer(sentences[1:], padding=True,
-                                    truncation=True, return_tensors='pt')
+           
             for key in question_inputs:
                 question_inputs[key] = question_inputs[key].to(self.device)
-            for key in select_inputs:
-                select_inputs[key] = select_inputs[key].to(self.device)
-            
+            if not self.select_inputs:
+                
+                select_inputs = self.tokenizer(sentences[1:], padding=True,
+                                    truncation=True, return_tensors='pt')
+                for key in select_inputs:
+                    select_inputs[key] = select_inputs[key].to(self.device)
+                self.select_inputs = select_inputs
             outputs = self.model(question_inputs, select_inputs)
             sentence_embeddings = outputs
 
