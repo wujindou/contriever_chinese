@@ -109,7 +109,8 @@ class QuestionReferenceDensityScorer:
 
 def test_contriever_scorer():
     sentences = open('retrieval_data.txt').read().split('\n')
-    scorer = QuestionReferenceDensityScorer('ckpt/question_encoder', 'ckpt/reference_encoder')
+    checkpoint='facebook/mcontriever-msmarco'
+    scorer = QuestionReferenceDensityScorer(checkpoint, checkpoint)
     while True:
         query = input('Input your query >>>')
         print(scorer.score_documents_on_query(query, sentences))
