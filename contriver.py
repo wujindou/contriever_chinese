@@ -84,14 +84,12 @@ class QuestionReferenceDensityScorer:
            
             for key in question_inputs:
                 question_inputs[key] = question_inputs[key].to(self.device)
-            if not self.select_inputs:
                 
-                select_inputs = self.tokenizer(sentences[1:], padding=True,
+            select_inputs = self.tokenizer(sentences[1:], padding=True,
                                     truncation=True, return_tensors='pt')
-                for key in select_inputs:
-                    select_inputs[key] = select_inputs[key].to(self.device)
-                self.select_inputs = select_inputs
-            outputs = self.model(question_inputs, self.select_inputs)
+            for key in select_inputs:
+                select_inputs[key] = select_inputs[key].to(self.device)
+            outputs = self.model(question_inputs, select_inputs)
             sentence_embeddings = outputs
 
             return sentence_embeddings
@@ -144,7 +142,7 @@ def test_contriever_scorer():
         top5_uids = [uids[t_id] for t_id in target_idx]
         print(target_idx)
         print(top5_uids)
-        for d in query_results[q]:print(d)
+#         for d in query_results[q]:print(d)
         ids = [d['idx'] for d in query_results[q] if d['label']>=1]
         print(ids)
         recall_at_5 = len(set(ids)&(set(top5_uids)))/len(ids) if  len(ids)>0 else 0.0
