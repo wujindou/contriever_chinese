@@ -101,7 +101,7 @@ class QuestionReferenceDensityScorer:
             `ret`: `torch.return_types.topk`, use `ret.values` or `ret.indices` to get value or index tensor
         """
         scores = []
-        max_batch = 128
+        max_batch = 256
         for i in range((len(documents) + max_batch - 1) // max_batch):
             scores.append(self.score_documents_on_query(query, documents[max_batch*i:max_batch*(i+1)]).to('cpu'))
         scores = torch.concat(scores)
@@ -132,13 +132,16 @@ def test_contriever_scorer():
     scorer = QuestionReferenceDensityScorer(checkpoint, checkpoint)
     total_cnt =0
     sum_score = 0
+    import time
     for q in query_results.keys():
+        start = time.time()
         target_idx = scorer.select_topk(query, sentences, 5).indices
         top5_uids = [uids[idx] for idx in target_idx]
         ids = [d['idx'] for d in query_results[q] if d['label']>=1]
         recall_at_5 = len(set(ids)&(set(top5_uids)))/len(ids) if  len(ids)>0 else 0.0
         sum_score+=recall_at_5
         total_cnt+=1
+        print('cost ='+str(time.time()-start))
     print('recall @ 5 ='+str(float(sum_score)/total_cnt))
 
 if __name__ == "__main__":
