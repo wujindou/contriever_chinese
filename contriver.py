@@ -108,7 +108,10 @@ class QuestionReferenceDensityScorer:
         return scores.topk(min(k, len(scores)))
 
 def test_contriever_scorer():
-    sentences = open('retrieval_data.txt').read().split('\n')
+    json_data= json.load(open('ndsd_data_all_clean_0413.json','r',encoding='utf-8'))
+    sentences = []
+    for d in json_data:sentences.extend(d['sentences'])
+#     sentences = open('retrieval_data.txt').read().split('\n')
     checkpoint='facebook/mcontriever-msmarco'
     scorer = QuestionReferenceDensityScorer(checkpoint, checkpoint)
     while True:
