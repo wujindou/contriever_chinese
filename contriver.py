@@ -152,6 +152,7 @@ def test_contriever_scorer():
         sum_score+=recall_at_5
         total_cnt+=1
         print('cost ='+str(time.time()-start))
+        sys.exit(1)
     print('recall @ 5 ='+str(float(sum_score)/total_cnt))
 
 if __name__ == "__main__":
