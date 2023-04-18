@@ -6,7 +6,7 @@ import re
 
 
 class Contriever(BertModel):
-    def __init__(self, config, pooling="average", **kwargs):
+    def __init__(self, config, pooling="cls", **kwargs):
         super().__init__(config, add_pooling_layer=False)
         if not hasattr(config, "pooling"):
             self.config.pooling = pooling
