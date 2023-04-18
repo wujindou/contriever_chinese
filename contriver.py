@@ -140,7 +140,7 @@ def test_contriever_scorer():
     import time
     for q in sorted(query_results.keys())[:20]:
         start = time.time()
-        target_idx = scorer.select_topk(query, sentences, 5).indices
+        target_idx = scorer.select_topk(q, sentences, 5).indices
         top5_uids = [uids[idx] for idx in target_idx]
         ids = [d['idx'] for d in query_results[q] if d['label']>=1]
         recall_at_5 = len(set(ids)&(set(top5_uids)))/len(ids) if  len(ids)>0 else 0.0
