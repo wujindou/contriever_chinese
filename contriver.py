@@ -113,7 +113,7 @@ def test_contriever_scorer():
     sentences=[]
     idx = 202304180000
     query_results = collections.defaultdict(list)
-    with open('d:/dureader_retrieval/train/cross.train.demo.tsv','r',encoding='utf-8') as lines:
+    with open('cross.train.demo.tsv','r',encoding='utf-8') as lines:
         for line in lines:
             data = line.strip().split('\t')
             query = data[0]
