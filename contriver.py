@@ -119,7 +119,8 @@ def test_contriever_scorer():
         print(scorer.score_documents_on_query(query, sentences))
         target_idx = scorer.select_topk(query, sentences, 3).indices
         result = [sentences[idx] for idx in target_idx]
-        print(result)
+        for d in result:
+            print(d)
 
 if __name__ == "__main__":
     test_contriever_scorer()
