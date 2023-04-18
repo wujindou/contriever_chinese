@@ -108,7 +108,7 @@ class QuestionReferenceDensityScorer:
         return scores.topk(min(k, len(scores)))
 
 def test_contriever_scorer():
-   import collections
+    import collections
     uids = []
     sentences=[]
     idx = 202304180000
