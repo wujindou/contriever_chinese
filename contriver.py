@@ -91,7 +91,7 @@ class QuestionReferenceDensityScorer:
                 for key in select_inputs:
                     select_inputs[key] = select_inputs[key].to(self.device)
                 self.select_inputs = select_inputs
-            outputs = self.model(question_inputs, select_inputs)
+            outputs = self.model(question_inputs, self.select_inputs)
             sentence_embeddings = outputs
 
             return sentence_embeddings
@@ -116,7 +116,7 @@ def test_contriever_scorer():
     import collections
     uids = []
     sentences=[]
-    idx = 202304180000
+    idx = 100000
     query_results = collections.defaultdict(list)
     idx_to_doc = {}
     with open('cross.train.demo.tsv','r',encoding='utf-8') as lines:
