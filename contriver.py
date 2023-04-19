@@ -118,6 +118,7 @@ def test_contriever_scorer():
     query_results = collections.defaultdict(list)
     idx_to_doc = {}
     uniq_passages = set()
+    all_passages = []
     with open('dev.json','r',encoding='utf-8') as lines:
         for line in lines:
             data = json.loads(line.strip())
