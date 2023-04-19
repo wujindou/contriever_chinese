@@ -135,7 +135,7 @@ def test_contriever_scorer():
                 idx_to_doc[idx]= json_data
                 uids.append(idx)
                 sentences.append(passage)
-                tokenized_corpus.append(' '.join(jieba.lcut(passage)))
+#                 tokenized_corpus.append(' '.join(jieba.lcut(passage)))
 #     with open('cross.train.demo.tsv','r',encoding='utf-8') as lines:
 #         for line in lines:
 #             data = line.strip().split('\t')
