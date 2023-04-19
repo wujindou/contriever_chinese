@@ -117,18 +117,36 @@ def test_contriever_scorer():
     idx = 100000
     query_results = collections.defaultdict(list)
     idx_to_doc = {}
-    with open('cross.train.demo.tsv','r',encoding='utf-8') as lines:
+    uniq_passages = set()
+    with open('dev.json','r',encoding='utf-8') as lines:
         for line in lines:
-            data = line.strip().split('\t')
-            query = data[0]
-            passage = data[2]
-            label = int(data[-1])
+            data = json.loads(line.strip())
+            query = data['sentence1']
+            passage = data['sentence2']
+            label = int(data['label'])
             idx+=1
             json_data = {'query':query,'passage':passage,'label':label,'idx':idx}
-            query_results[query].append(json_data)
-            idx_to_doc[idx]= json_data
-            uids.append(idx)
-            sentences.append(passage)
+            if int(label)==1:
+                query_results[query].append(json_data)
+            if passage not in uniq_passages:
+                uniq_passages.add(passage)
+                all_passages.append(passage)
+                idx_to_doc[idx]= json_data
+                uids.append(idx)
+                sentences.append(passage)
+                tokenized_corpus.append(' '.join(jieba.lcut(passage)))
+#     with open('cross.train.demo.tsv','r',encoding='utf-8') as lines:
+#         for line in lines:
+#             data = line.strip().split('\t')
+#             query = data[0]
+#             passage = data[2]
+#             label = int(data[-1])
+#             idx+=1
+#             json_data = {'query':query,'passage':passage,'label':label,'idx':idx}
+#             query_results[query].append(json_data)
+#             idx_to_doc[idx]= json_data
+#             uids.append(idx)
+#             sentences.append(passage)
 #     for d in json_data:sentences.extend(d['sentences'])
 #     sentences = open('retrieval_data.txt').read().split('\n')
     checkpoint='facebook/mcontriever-msmarco'
@@ -136,7 +154,7 @@ def test_contriever_scorer():
     total_cnt =0
     sum_score = 0
     import time
-    for q in sorted(query_results.keys())[:20]:
+    for q in sorted(query_results.keys())[:50]:
         start = time.time()
         target_idx = scorer.select_topk(q, sentences, 5).indices
         top5_uids = [uids[t_id] for t_id in target_idx]
